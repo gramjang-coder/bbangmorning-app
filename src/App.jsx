@@ -428,19 +428,7 @@ export default function App() {
         ctx.restore();
       });
 
-      // 4) Watermark
-      const wmFs = 14 * scale;
-      ctx.font = `bold ${wmFs}px -apple-system, BlinkMacSystemFont, sans-serif`;
-      ctx.textAlign = 'right';
-      ctx.textBaseline = 'bottom';
-      ctx.lineJoin = 'round';
-      ctx.strokeStyle = 'rgba(0,0,0,0.15)';
-      ctx.lineWidth = scale * 2;
-      ctx.strokeText('🥐 빵모닝', cW - 14 * scale, cH - 14 * scale);
-      ctx.fillStyle = 'rgba(255,255,255,0.7)';
-      ctx.fillText('🥐 빵모닝', cW - 14 * scale, cH - 14 * scale);
-
-      // 5) Trigger download
+      // 4) Trigger download
       const link = document.createElement('a');
       link.download = `bbangmorning_${Date.now()}.png`;
       link.href = canvas.toDataURL('image/png');
