@@ -78,6 +78,7 @@ export default function App() {
   const [cameraFilter, setCameraFilter] = useState('original');
   const [facingMode, setFacingMode] = useState('environment');
   const [aspectRatio, setAspectRatio] = useState('1:1');
+  const [editingTextId, setEditingTextId] = useState(null);
 
   // ─── Refs ───
   const containerRef = useRef(null);
@@ -298,7 +299,7 @@ export default function App() {
     deselect();
   };
 
-  const deselect = () => { setSelectedId(null); setSelectedType(null); };
+  const deselect = () => { setSelectedId(null); setSelectedType(null); setEditingTextId(null); };
 
   const resetAll = () => {
     setImage(null);
@@ -652,7 +653,8 @@ export default function App() {
               {texts.map(t => (
                 <div
                   key={t.id}
-                  onPointerDown={(e) => startDrag(e, t.id, 'text')}
+                  onPointerDown={(e) => { if (editingTextId !== t.id) startDrag(e, t.id, 'text'); }}
+                  onClick={() => { if (selectedId === t.id && editingTextId !== t.id) setEditingTextId(t.id); }}
                   style={{
                     ...itemOverlay(t, selectedId === t.id),
                     fontSize: t.size,
@@ -665,7 +667,20 @@ export default function App() {
                     fontFamily: '-apple-system, sans-serif',
                   }}
                 >
-                  {t.text}
+                  {editingTextId === t.id ? (
+                    <input
+                      autoFocus
+                      value={t.text}
+                      onChange={(e) => setTexts(prev => prev.map(item => item.id === t.id ? { ...item, text: e.target.value } : item))}
+                      onBlur={() => setEditingTextId(null)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') setEditingTextId(null); }}
+                      style={{
+                        background: 'transparent', border: 'none', outline: 'none', padding: 0, margin: 0,
+                        font: 'inherit', color: 'inherit', width: Math.max(60, t.text.length * t.size * 0.6),
+                        WebkitTextStroke: t.stroke ? `${t.strokeWidth || 1}px ${t.stroke}` : 'unset',
+                      }}
+                    />
+                  ) : t.text}
                   {selectedId === t.id && (
                     <>
                       <div onPointerDown={(e) => startDrag(e, t.id, 'text', 'resize')}
