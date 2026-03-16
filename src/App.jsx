@@ -377,7 +377,12 @@ export default function App() {
         ctx.save();
         ctx.translate(x, y);
         ctx.rotate((s.rotation || 0) * Math.PI / 180);
-        ctx.drawImage(s.imgEl, -sz / 2, -sz / 2, sz, sz);
+        const nw = s.imgEl.naturalWidth || sz;
+        const nh = s.imgEl.naturalHeight || sz;
+        const ratio = nw / nh;
+        const dw = ratio >= 1 ? sz : sz * ratio;
+        const dh = ratio >= 1 ? sz / ratio : sz;
+        ctx.drawImage(s.imgEl, -dw / 2, -dh / 2, dw, dh);
         ctx.restore();
       });
 
